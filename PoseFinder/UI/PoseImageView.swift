@@ -6,16 +6,29 @@ Implementation details of a view that visualizes the detected poses.
 */
 
 import UIKit
+import SocketIO
+import Foundation
 
 @IBDesignable
-class PoseImageView: UIImageView {
 
+class PoseImageView: UIImageView {
+    
+//    let manager = SocketManager(socketURL: URL(string:"http://192.168.22.88:8080/")!, config: [.log(true), .compress])
+//    var socket : SocketIOClient!
     /// A data structure used to describe a visual connection between two joints.
     struct JointSegment {
         let jointA: Joint.Name
         let jointB: Joint.Name
     }
-
+    
+//   struct CustomData : SocketData {
+//      let name: String
+//      let age: Int
+//
+//      func socketRepresentation() -> SocketData {
+//        return ("name": name, "age": age)
+//      }
+//   }
     /// An array of joint-pairs that define the lines of a pose's wireframe drawing.
     static let jointSegments = [
         // The connected joints that are on the left side of the body.
@@ -51,6 +64,47 @@ class PoseImageView: UIImageView {
     /// - parameters:
     ///     - poses: An array of detected poses.
     ///     - frame: The image used to detect the poses and used as the background for the returned image.
+//    struct jsondata:Codable  {
+//        var id: Int
+//        var name: String
+//        var job: String
+//
+//    }
+//
+//    let json = jsondata(id: 20, name: "たけし", job: "ルーメン技師")
+//
+//
+    
+    
+    
+//    func emit(_event:Array<Any>,_item:SocketData...){
+//         socket = manager.defaultSocket
+//         print("sendData")
+//
+//        let jsonemitdata = try! JSONEncoder().encode(json)
+//        print ("ジェイソンデータは、",json)
+//        
+//         socket.on(clientEvent: .connect){[weak self] data, ack in
+//             print("socket connected!")
+//            self?.socket.emit("from_client",jsonemitdata)
+            
+         
+//        self? socket.emit("from_client",CustomData(name: "Erik", age: 24))
+
+//         socket.on(clientEvent: .disconnect){data, ack in
+//             print("socket disconnected!")
+//         }
+//
+//         socket.on("from_server"){data, ack in
+//             if let message = data as? [String]{
+//                 print(message[0])
+//
+//             }
+//         }
+//         socket.connect()
+//        }
+
+//
     func show(poses: [Pose], on frame: CGImage) {
         let dstImageSize = CGSize(width: frame.width, height: frame.height)
         let dstImageFormat = UIGraphicsImageRendererFormat()
@@ -62,6 +116,7 @@ class PoseImageView: UIImageView {
         let dstImage = renderer.image { rendererContext in
             // Draw the current frame as the background for the new image.
             draw(image: frame, in: rendererContext.cgContext)
+//              sendData(poses: poses)
 
             for pose in poses {
                 // Draw the segment lines.
@@ -103,7 +158,6 @@ class PoseImageView: UIImageView {
         cgContext.draw(image, in: drawingRect)
         cgContext.restoreGState()
     }
-
     /// Draws a line between two joints.
     ///
     /// - parameters:
@@ -134,4 +188,5 @@ class PoseImageView: UIImageView {
         cgContext.addEllipse(in: rectangle)
         cgContext.drawPath(using: .fill)
     }
+
 }

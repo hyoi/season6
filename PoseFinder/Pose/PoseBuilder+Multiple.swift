@@ -91,7 +91,14 @@ extension PoseBuilder {
         // Sort and return candidates in order of their confidence.
         return candidateRoots.sorted { $0.confidence > $1.confidence }
     }
-
+    //与えられたポーズの信頼度を計算して返します。
+    ///
+    ///オーバーラップしていないすべてのジョイントの合計を以下から除算することにより、ポーズの信頼度を計算します
+    ///ジョイントの総数による既存のポーズ。
+    /// - パラメーター：
+    ///-ポーズ：信頼度を計算するポーズ。
+    ///-detectedPoses：すでに検出されたポーズの配列。
+    ///-戻り値：指定されたポーズの信頼度。
     /// Calculates and returns the given pose's confidence.
     ///
     /// Calculates the pose's confidence by dividing the sum of all non-overlapping joints, from

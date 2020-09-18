@@ -9,8 +9,14 @@ The implementation of the application's view controller, responsible for coordin
 import AVFoundation
 import UIKit
 import VideoToolbox
+import SocketIO
 
 class ViewController: UIViewController {
+    
+    let manager = SocketManager(socketURL: URL(string:"http://192.168.22.88:8080/")!, config: [.log(true), .compress])
+       var socket : SocketIOClient!
+    
+    
     /// The view the controller uses to visualize the detected poses.
     @IBOutlet private var previewImageView: PoseImageView!
 
@@ -29,9 +35,65 @@ class ViewController: UIViewController {
 
     private var popOverPresentationManager: PopOverPresentationManager?
 
+    
+//    @IBAction func tapButton(_ sender:Any){
+//        socket.emit("from_client",[Pose]())
+//    }
+    
+    struct jsondata:Codable  {
+        var id: Int
+        var name: String
+        var job: String
+        
+        
+    }
+    
+    let json = jsondata(id: 20, name: "たけし", job: "ルーメン技師")
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
+    let jsonemitdata = try! JSONEncoder().encode(json)
+             print ("ジェイソンデータは、",jsonemitdata)
+        //socket
+        socket = manager.defaultSocket
+
+               socket.on(clientEvent: .connect){ data, ack in
+                   print("socket 繋がった")
+                self.socket.emit("from_client",jsonemitdata)
+
+               }
+        
+            socket.on("from_server"){data, ack in
+            
+                print("これだ、",data)
+               
+                
+              
+//                do{
+//                    guard let data = data else { return }                    print(datajson.self)
+//                           } catch let jsonError{
+//                               print("error", jsonError)
+//                           }
+//
+//
+        }
+        
+            
+        
+
+//
+               socket.on(clientEvent: .disconnect){data, ack in
+                   print("socket 切れた")
+               }
+
+               
+               
+               socket.connect()
+        
+    
+        
         // For convenience, the idle timer is disabled to prevent the screen from locking.
         UIApplication.shared.isIdleTimerDisabled = true
 
